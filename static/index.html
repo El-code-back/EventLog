@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>EventLog MVP</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <strong>EventLog</strong>
+          <small>активности, команды, участие</small>
+        </div>
+
+        <section id="registerPanel" class="panel auth-panel">
+          <label for="nameInput">Быстрый вход</label>
+          <div class="inline-form">
+            <input id="nameInput" type="text" placeholder="Имя или никнейм" autocomplete="off" />
+            <input id="pinInput" type="text" maxlength="12" placeholder="Пин или код" autocomplete="off" />
+            <button id="registerBtn" type="button">Войти</button>
+          </div>
+          <p id="currentUser" class="muted">Создайте профиль, чтобы начать.</p>
+        </section>
+
+        <nav class="nav-tabs" aria-label="Разделы">
+          <button class="active" data-page="dashboard" type="button">Главная</button>
+          <button data-page="events" type="button">События</button>
+          <button data-page="social" type="button">Друзья</button>
+          <button data-page="team" type="button">Команда</button>
+        </nav>
+
+        <section class="panel compact">
+          <span class="panel-label">Показать</span>
+          <div class="segmented" id="viewMode">
+            <button class="active" data-view="all" type="button">Все</button>
+            <button data-view="mine" type="button">Мои</button>
+            <button data-view="team" type="button">Команда</button>
+          </div>
+        </section>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <div>
+            <h1 id="pageTitle">Мои активности</h1>
+            <p id="pageLead">Ближайшие события, участие и приглашения без лишней настройки.</p>
+          </div>
+          <button id="openCreateBtn" class="primary" type="button">Создать событие</button>
+        </header>
+
+        <section class="filters" aria-label="Фильтры">
+          <input id="searchInput" type="search" placeholder="Поиск" />
+          <select id="typeFilter"></select>
+          <select id="levelFilter"></select>
+          <input id="tagFilter" type="search" placeholder="Тег" />
+        </section>
+
+        <section id="dashboardPage" class="page active">
+          <div class="quick-stats" id="summaryStats"></div>
+          <div class="dashboard-grid">
+            <section class="panel calendar-panel">
+              <div class="section-head">
+                <h2>Ближайшие события</h2>
+              </div>
+              <div id="calendar"></div>
+            </section>
+            <section class="panel feed-panel">
+              <div class="section-head">
+                <h2>Мои участия</h2>
+              </div>
+              <div id="recentFeed" class="feed"></div>
+            </section>
+            <section class="panel chart-panel">
+              <div class="section-head">
+                <h2>Статусы участия</h2>
+              </div>
+              <canvas id="statusChart" height="130"></canvas>
+            </section>
+            <section class="panel chart-panel">
+              <div class="section-head">
+                <h2>Типы фактического участия</h2>
+              </div>
+              <canvas id="typeChart" height="130"></canvas>
+            </section>
+            <section class="panel feed-panel">
+              <div class="section-head">
+                <h2>Топ совместных участий</h2>
+              </div>
+              <div id="collaboratorsList" class="feed"></div>
+            </section>
+            <section class="panel feed-panel">
+              <div class="section-head">
+                <h2>История активности</h2>
+              </div>
+              <div id="timelineList" class="timeline"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="eventsPage" class="page">
+          <div id="eventList" class="event-list"></div>
+        </section>
+
+        <section id="socialPage" class="page">
+          <div class="social-layout">
+            <section class="panel">
+              <div class="section-head">
+                <h2>Профиль</h2>
+              </div>
+              <div id="profileBox" class="profile-box"></div>
+            </section>
+            <section class="panel">
+              <div class="section-head">
+                <h2>Поиск друзей</h2>
+              </div>
+              <div class="mini-form stacked">
+                <input id="friendNameInput" type="text" placeholder="Имя" />
+                <input id="friendCodeInput" type="text" placeholder="Короткий код" />
+                <button id="findFriendBtn" type="button">Найти</button>
+              </div>
+              <div id="friendSearchResults" class="feed"></div>
+            </section>
+            <section class="panel">
+              <div class="section-head">
+                <h2>Друзья</h2>
+              </div>
+              <div id="friendsList" class="feed"></div>
+            </section>
+            <section class="panel">
+              <div class="section-head">
+                <h2>Приглашения</h2>
+              </div>
+              <div id="invitesList" class="feed"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="teamPage" class="page">
+          <div class="team-layout">
+            <section class="panel">
+              <div class="section-head">
+                <h2 id="teamName">Команда</h2>
+              </div>
+              <div id="teamMembers" class="chips"></div>
+              <div class="mini-form stacked">
+                <input id="teamNameInput" type="text" placeholder="Новая команда" />
+                <button id="createTeamBtn" type="button">Создать команду</button>
+              </div>
+            </section>
+            <section class="panel">
+              <div class="section-head">
+                <h2>События команды</h2>
+              </div>
+              <div id="teamEvents" class="feed"></div>
+            </section>
+            <section class="panel">
+              <div class="section-head">
+                <h2>Участие команды</h2>
+              </div>
+              <canvas id="teamChart" height="150"></canvas>
+            </section>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <dialog id="eventDialog">
+      <form id="eventForm" method="dialog" class="dialog-form">
+        <div class="dialog-head">
+          <h2>Новое событие</h2>
+          <button id="closeCreateBtn" type="button" aria-label="Закрыть">×</button>
+        </div>
+        <input name="title" required placeholder="Название" />
+        <textarea name="description" required placeholder="Описание"></textarea>
+        <div class="two-col">
+          <label>Начало<input name="start_date" type="datetime-local" required /></label>
+          <label>Окончание<input name="end_date" type="datetime-local" required /></label>
+        </div>
+        <div class="two-col">
+          <select name="type" required></select>
+          <select name="level" required></select>
+        </div>
+        <input name="link" placeholder="Ссылка: Telegram, Discord, сайт" />
+        <input name="tags" placeholder="Теги через запятую" />
+        <fieldset>
+          <legend>Статус участия</legend>
+          <label><input type="radio" name="status" value="planned" checked /> планирую</label>
+          <label><input type="radio" name="status" value="interested" /> интересно</label>
+          <label><input type="radio" name="status" value="attended" /> уже участвовал</label>
+        </fieldset>
+        <fieldset>
+          <legend>Видимость</legend>
+          <label><input type="radio" name="visibility_scope" value="all" checked /> видно всем</label>
+          <label><input type="radio" name="visibility_scope" value="private" /> видно только мне</label>
+          <label><input type="radio" name="visibility_scope" value="friends" /> друзьям / командам</label>
+          <label><input type="radio" name="visibility_scope" value="team" /> только команде</label>
+        </fieldset>
+        <fieldset>
+          <legend>Командное событие</legend>
+          <label><input type="checkbox" name="attach_team" /> связано с текущей командой</label>
+          <select name="team_visibility">
+            <option value="team_only">только участники команды</option>
+            <option value="public_anonymous">все, но анонимно</option>
+            <option value="hidden">скрыто даже от команды</option>
+          </select>
+        </fieldset>
+        <button class="primary" type="submit">Создать событие</button>
+      </form>
+    </dialog>
+
+    <dialog id="detailDialog">
+      <article id="eventDetail" class="event-detail"></article>
+    </dialog>
+
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>
