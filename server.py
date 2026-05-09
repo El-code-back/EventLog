@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import secrets
 import sqlite3
 import string
@@ -888,8 +889,10 @@ class Handler(SimpleHTTPRequestHandler):
 
 def main() -> None:
     init_db()
-    server = ThreadingHTTPServer(("127.0.0.1", 8000), Handler)
-    print("EventLog MVP is running at http://127.0.0.1:8000")
+    port = int(os.environ.get("PORT", "5000"))
+    host = "0.0.0.0"
+    server = ThreadingHTTPServer((host, port), Handler)
+    print(f"EventLog MVP is running at http://{host}:{port}")
     server.serve_forever()
 
 
