@@ -7,7 +7,7 @@ import sqlite3
 import string
 from datetime import datetime, timedelta, timezone
 from http import HTTPStatus
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import SimpleHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
@@ -888,12 +888,20 @@ class Handler(SimpleHTTPRequestHandler):
 
 
 def main() -> None:
-    init_db()
-    port = int(os.environ.get("PORT", "5000"))
-    host = "0.0.0.0"
-    server = ThreadingHTTPServer((host, port), Handler)
-    print(f"EventLog MVP is running at http://{host}:{port}")
-    server.serve_forever()
+    try:
+        init_db()
+        port = int(os.environ.get("PORT", "5000"))
+        host = "0.0.0.0"
+        server = HTTPServer((host, port), Handler)
+        print(f"EventLog MVP is running at http://{host}:{port}")
+        import sys
+        sys.stdout.flush()
+        server.serve_forever()
+    except Exception as e:
+        print(f"Error starting server: {e}")
+        import sys
+        sys.stdout.flush()
+        raise
 
 
 if __name__ == "__main__":
