@@ -5,6 +5,7 @@ import os
 import secrets
 import sqlite3
 import string
+import sys
 from datetime import datetime, timedelta, timezone
 from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, HTTPServer
@@ -894,12 +895,10 @@ def main() -> None:
         host = "0.0.0.0"
         server = HTTPServer((host, port), Handler)
         print(f"EventLog MVP is running at http://{host}:{port}")
-        import sys
         sys.stdout.flush()
         server.serve_forever()
     except Exception as e:
         print(f"Error starting server: {e}")
-        import sys
         sys.stdout.flush()
         raise
 
